@@ -2,7 +2,10 @@ import useSWR from "swr"
 
 function App() {
   const getData=(url)=>fetch(url).then(res=>res.json())
-  const{data}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
+  const{data}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
+    revalidateIfStale :false,
+    revalidateOnFocus : false
+  })
   console.log(data)
   return (
     <>
