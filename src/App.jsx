@@ -25,18 +25,24 @@ function App() {
   // })
 
   //use useSWR in a normal way->
-  const{data,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
+  const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
 
-  console.log(data , error?.info , error?.status)
+  //here we add a loading (if both data and error are undefined means it's loading and we use it to show something while loading)->
+  let isLoading= ! todos && ! error;
+
+  // console.log(data , error?.info , error?.status)
   return (
     <>
       {
-        data?.map(
+        isLoading ? <span>Loading....</span>
+        :(
+          todos?.map(
           (todo)=>(
             <div key={todo.id}>
               <p>{todo.text}</p>
             </div>
           )
+        )
         )
       }
     </>
