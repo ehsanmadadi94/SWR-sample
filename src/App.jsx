@@ -21,14 +21,14 @@ function App() {
 
   }
 //with options for useSWR->
-  const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
+  const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
     revalidateIfStale :true,
     revalidateOnFocus : true,
     refreshInterval:1000
   })
 
   //use useSWR in a normal way->
-  // const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
+  // const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
 
   //here we add a loading (if both data and error are undefined means it's loading and we use it to show something while loading)->
   let isLoading= ! todos && ! error;
