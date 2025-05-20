@@ -6,7 +6,8 @@ function App() {
   //const getData=(url)=>fetch(url).then(res=>res.json())
 
   //better way to do it and handle errors(I just logged it , you can use the error in other ways like show it or use it to return another component)->
-  const getData=async(url)=>{
+  const getData=async(url,todoID)=>{
+    console.log(todoID)
     const res =await fetch(url);
     if(! res.ok){
       const error= new Error('You have an error');
@@ -21,14 +22,28 @@ function App() {
 
   }
 //with options for useSWR->
-  const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
+  // const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
+  //   revalidateIfStale :true,
+  //   revalidateOnFocus : true,
+  //   refreshInterval:1000
+  // })
+
+  //use useSWR in a normal way->
+  // const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
+
+  //this way you can send data to fetcher function (getData)(first way)->
+  const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',(url)=>getData(url,6),{
     revalidateIfStale :true,
     revalidateOnFocus : true,
     refreshInterval:1000
   })
+    //this way you can send data to fetcher function (getData)(second way)->
+  //   const{data:todos,error,mutate}=useSWR(["https://68287be16b7628c529137a63.mockapi.io/Todos",8],getData,{
+  //   revalidateIfStale :true,
+  //   revalidateOnFocus : true,
+  //   refreshInterval:1000
+  // })
 
-  //use useSWR in a normal way->
-  // const{data:todos,error,mutate}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
 
   //here we add a loading (if both data and error are undefined means it's loading and we use it to show something while loading)->
   let isLoading= ! todos && ! error;
