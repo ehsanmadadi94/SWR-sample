@@ -1,4 +1,4 @@
-import useSWR from "swr"
+import useSWR, { mutate } from "swr"
 
 function App() {
 
@@ -15,22 +15,50 @@ function App() {
       throw error
     }
 
-    return res.json();
+    // return res.json();
+    let data=await res.json();
+    return data;
 
   }
 //with options for useSWR->
-  // const{data,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
-  //   revalidateIfStale :false,
-  //   revalidateOnFocus : false
-  // })
+  const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData,{
+    revalidateIfStale :true,
+    revalidateOnFocus : true,
+    refreshInterval:1000
+  })
 
   //use useSWR in a normal way->
-  const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
+  // const{data:todos,error}=useSWR('https://68287be16b7628c529137a63.mockapi.io/Todos',getData)
 
   //here we add a loading (if both data and error are undefined means it's loading and we use it to show something while loading)->
   let isLoading= ! todos && ! error;
 
   // console.log(data , error?.info , error?.status)
+
+  const addTodoHandler = async ()=>{
+    let todo={
+      text: 'new todo'+Date.now(),
+      is_done:false,
+      id:Date.now(),
+    }
+    mutate([
+      ...todos,
+      {
+        ...todo,
+        id:Date.now(),
+      }],{
+        revalidate:false
+      })
+
+    const res = await fetch('https://68287be16b7628c529137a63.mockapi.io/Todos',{
+      method:'POST',
+       headers: {'content-type':'application/json'},
+       body:JSON.stringify(todo)
+    })
+    mutate()
+    console.log(res)
+  }
+
   return (
     <>
       {
@@ -45,6 +73,7 @@ function App() {
         )
         )
       }
+      <button onClick={addTodoHandler}>Add Todo</button>
     </>
   )
 }
